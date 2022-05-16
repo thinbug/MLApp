@@ -58,3 +58,6 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+/MLAppUnity/Temp
+/MLAppUnity/Library
+/MLAppUnity/Logs
