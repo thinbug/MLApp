@@ -28,7 +28,8 @@ public class MoveToTarget : Agent
     //当一段经历开始
     public override void OnEpisodeBegin()
     {
-        transform.localPosition = Vector3.zero;
+        transform.localPosition = new Vector3(Random.Range(-9f, 0f), 0f, Random.Range(-4f, 4f));
+        targetTfm.localPosition = new Vector3(Random.Range(1f, 9f), 0f, Random.Range(-4f, 4f));
         //Debug.Log("经历开始");
     }
 

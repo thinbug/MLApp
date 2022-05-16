@@ -61,3 +61,6 @@ crashlytics-build.properties
 /MLAppUnity/Temp
 /MLAppUnity/Library
 /MLAppUnity/Logs
+/MLAppUnity/results
+/MLAppUnity/venv/Scripts/results
+/MLAppUnity/obj
