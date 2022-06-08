@@ -10,9 +10,15 @@ public class FoodAgent : Agent
     [SerializeField] FoodSwitch foodSwitch;
     [SerializeField] FoodSpawn foodSpawn;
     [SerializeField] Renderer plane;
-    float moveSpd = 10f;
+    [SerializeField] TextMesh text;
+    float moveSpd = 3f;
 
     Rigidbody rig;
+
+    float btime;
+    float greentime = 1000f;   //当前最快结束的
+    float usetime;//本次用时
+    const float greenrange = 5f;    //比最快值长，也是绿色
 
     private void Awake()
     {
@@ -22,12 +28,13 @@ public class FoodAgent : Agent
     //当一段经历开始
     public override void OnEpisodeBegin()
     {
-        plane.material.color = Color.grey;
-
+        btime = Time.time;
         transform.localPosition = new Vector3(Random.Range(-9f, 0f), 0f, Random.Range(-4f, 4f));
         foodSwitch.transform.localPosition = new Vector3(Random.Range(3f, 9f), 0f, Random.Range(-4f, 4f));
 
         foodSpawn.transform.localPosition = new Vector3(Random.Range(-9f, 0f), 5f, Random.Range(-4f, 4f));
+
+        foodSwitch.Clear();
         Debug.Log("经历开始");
     }
 
@@ -44,7 +51,7 @@ public class FoodAgent : Agent
 
         if (foodSpawn.hasFood)
         {
-            Vector3 dirfood = (foodSpawn.transform.localPosition - transform.localPosition).normalized;
+            Vector3 dirfood = (foodSpawn.GetFoodAt() - transform.localPosition).normalized;
             sensor.AddObservation(dirfood.x);
             sensor.AddObservation(dirfood.z);
         }
@@ -113,9 +120,7 @@ public class FoodAgent : Agent
     //启发
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        //Debug.Log("Heuristic ");
         ActionSegment<int> actions = actionsOut.DiscreteActions;
-        //Debug.Log(actions);
         switch (Mathf.RoundToInt(Input.GetAxisRaw("Horizontal")))
         {
             case -1:
@@ -147,18 +152,43 @@ public class FoodAgent : Agent
 
             foodSwitch.Switch(false);
 
+            //计算用时
+            float nowtime = Time.time;
+            usetime = nowtime - btime;
+            if (usetime < greentime)
+            {
+                greentime = usetime;
+                
+            }
+            if (usetime - greenrange < greentime)
+            {
+                isgreen = true;
+                //如果比最短时间大一定数值还是允许是绿色的。
+                plane.material.color = Color.green;
+            }
 
             EndEpisode();
 
-            plane.material.color = Color.green;
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    bool isgreen;
+    private void Update()
     {
-        //Debug.Log("OnTriggerEnter："+other.name);
-        
-        
+        usetime = Time.time - btime;
+        text.text = ((int)usetime).ToString()+"/" +((int)greentime).ToString(); 
+        if (isgreen)
+        {
+            //如果是绿色的，检测超时就改为灰色
+            
+            if (usetime - greenrange > greentime)
+            {
+                //如果比最短时间大一定数值还是允许是绿色的。
+                plane.material.color = Color.gray;
+                isgreen = false;
+            }
+        }
     }
+
 
 }

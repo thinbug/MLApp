@@ -10,8 +10,15 @@ public class FoodSpawn : MonoBehaviour
     public bool hasFood;
     GameObject food;
 
-    
+  
 
+    public Vector3 GetFoodAt()
+    {
+        if (food == null)
+            return Vector3.zero;
+        return food.transform.localPosition;
+    }
+    //投食
     public void PutInFood()
     {
         hasFood = true;
@@ -22,9 +29,12 @@ public class FoodSpawn : MonoBehaviour
         food.transform.localPosition = transform.localPosition;
     }
 
+    //获取食物（被吃掉）
     public void GetFood()
     {
         hasFood = false;
-        GameObject.Destroy(food);
+        if (food != null)
+            GameObject.Destroy(food);
+        food = null;
     }
 }

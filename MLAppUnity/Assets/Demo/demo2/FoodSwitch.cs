@@ -5,14 +5,23 @@ using UnityEngine;
 //UTF8 说明
 public class FoodSwitch : MonoBehaviour
 {
-    public FoodSpawn foodSpawn;
-    public Renderer renderSwitch;
+    public FoodSpawn foodSpawn; //触发的食物衍生
+    public Renderer renderSwitch;   //改变按钮颜色
 
-    public Material onMat;
-    public Material offMat;
+    public Material onMat;  //按下的材质
+    public Material offMat; //关闭的材质
 
-    public bool isOn;
+    public bool isOn;   //按钮是否打开
 
+    public void Clear()
+    {
+        isOn = false;
+        renderSwitch.material = offMat;
+        //让按钮还原高度
+        renderSwitch.transform.localPosition = new Vector3(0f, -0.5f, 0f);
+        //获得食物，并吃掉
+        foodSpawn.GetFood();
+    }
     public void Switch(bool on)
     {
         if (!isOn && on)
